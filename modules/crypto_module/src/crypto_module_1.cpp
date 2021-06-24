@@ -11,7 +11,7 @@ namespace crypto {
 
     void init() {
         memset(&current_key, 0 , sizeof(current_key));
-        memset(&current_nonce, 0 , sizeof(current_nonce));
+        memset(current_nonce, 0 , sizeof(nonce));
         current_state = initialized;
     }
 
