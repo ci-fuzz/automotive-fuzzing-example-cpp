@@ -1,5 +1,4 @@
 #include <string.h>
-#include <stdlib.h>
 #include "crypto_module_1.h"
 #include "crypto_module_2.h"
 
@@ -50,22 +49,23 @@ namespace crypto {
         return invalid_nonce_provided;
     }
 
-    return_status calculate_hmac(const uint8_t * const message, int len, hmac * h) {
+    return_status calculate_hmac(const uint8_t * const message, size_t len, hmac * h) {
         if (current_state == nonce_and_key_set) {
             if (current_nonce != 0) {
                 if (third_party_library_calc_hmac(message, len, (char*) &(current_key.key[0]), (char*)current_nonce, h->hmac) == 0) {
                     //Delete nonce to make sure it is only used once
-                    free(current_nonce);
+                    //free(current_nonce);
                     //current_nonce = 0;
                     return hmac_successfully_calculated;
                 }
             }
+            current_state = initialized;
             return error_during_hmac_calculation;
         }
         return wrong_state;
     }
 
-    return_status verify_hmac(const uint8_t * const message, int len, hmac * h) {
+    return_status verify_hmac(const uint8_t * const message, size_t len, hmac * h) {
         hmac own_hmac;
         return_status hmac_calc_status = calculate_hmac(message, len, &own_hmac);
         if (hmac_calc_status != hmac_successfully_calculated) {

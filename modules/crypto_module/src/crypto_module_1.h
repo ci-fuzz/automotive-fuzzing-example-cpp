@@ -2,10 +2,11 @@
 #define CRYPTO_MODULE_1_H
 
 #include <stdint.h>
+#include <stdlib.h>
 
 #include "crypto_module_types.h"
 
-extern uint8_t third_party_library_calc_hmac(const uint8_t * const message, int len, char * const key, char * const nonce, uint8_t * hmac);
+extern uint8_t third_party_library_calc_hmac(const uint8_t * const message, size_t len, char * const key, char * const nonce, uint8_t * hmac);
 
 namespace crypto
 {
@@ -17,9 +18,9 @@ namespace crypto
 
     return_status set_nonce(nonce n);
 
-    return_status calculate_hmac(const uint8_t * const message, int len, hmac * h);
+    return_status calculate_hmac(const uint8_t * const message, size_t len, hmac * h);
 
-    return_status verify_hmac(const uint8_t * const message, int len, hmac * h);
+    return_status verify_hmac(const uint8_t * const message, size_t len, hmac * h);
 
 } // namespace crypto
 
