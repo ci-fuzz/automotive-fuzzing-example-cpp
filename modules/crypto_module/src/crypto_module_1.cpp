@@ -1,4 +1,5 @@
 #include <string.h>
+#include <iostream>
 #include "crypto_module_1.h"
 #include "crypto_module_2.h"
 
@@ -60,6 +61,7 @@ namespace crypto {
                 }
             }
             current_state = initialized;
+            std::cout << "[ERROR] Error during hmac calculation!";
             return error_during_hmac_calculation;
         }
         return wrong_state;
