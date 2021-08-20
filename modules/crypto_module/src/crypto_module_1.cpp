@@ -82,3 +82,20 @@ namespace crypto {
     }
 
 }
+
+uint8_t third_party_library_calc_hmac(const uint8_t * const message, size_t len, char * const key, char * const nonce, uint8_t * hmac) {
+    if (len > 4) {
+        if (message[0] == 1) {
+            if (message[1] == 2) {            
+                if (message[2] == 3) {               
+                    if (message[3] == 4) {
+                        int x[3];
+                        int y = 4;
+                        int z = x[y];
+                    }   
+                }   
+            }   
+        }
+    }
+    return 0;
+}

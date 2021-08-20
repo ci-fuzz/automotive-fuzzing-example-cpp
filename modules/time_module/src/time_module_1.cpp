@@ -7,3 +7,7 @@ namespace time_management {
     }
 
 }
+
+int driver_get_current_time() {
+    return 0;
+}

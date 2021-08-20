@@ -5,7 +5,7 @@
 
 #include "key_management_module_types.h"
 
-extern uint8_t HSM_get_random_byte();
+uint8_t HSM_get_random_byte();
 
 namespace key_management {
 

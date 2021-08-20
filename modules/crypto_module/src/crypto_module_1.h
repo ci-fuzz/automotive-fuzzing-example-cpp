@@ -6,7 +6,7 @@
 
 #include "crypto_module_types.h"
 
-extern uint8_t third_party_library_calc_hmac(const uint8_t * const message, size_t len, char * const key, char * const nonce, uint8_t * hmac);
+uint8_t third_party_library_calc_hmac(const uint8_t * const message, size_t len, char * const key, char * const nonce, uint8_t * hmac);
 
 namespace crypto
 {

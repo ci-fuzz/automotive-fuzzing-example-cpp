@@ -18,3 +18,7 @@ namespace key_management {
     }
 
 }
+
+uint8_t HSM_get_random_byte() {
+    return 0;
+}
