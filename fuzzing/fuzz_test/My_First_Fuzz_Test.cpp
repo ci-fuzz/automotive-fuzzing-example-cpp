@@ -31,6 +31,8 @@ extern "C" int FUZZ(const uint8_t *Data, size_t Size) {
     FuzzedDataProvider fuzz_data_provider(Data, Size);
     FuzzedDataProvider *fuzz_data = &fuzz_data_provider;
 
+    crypto::init();
+
     int number_of_functions = fuzz_data->ConsumeIntegralInRange<int>(1,100);
     for (int i=0; i<number_of_functions; i++) {
       int func_id = fuzz_data->ConsumeIntegralInRange<int>(0, 15);
