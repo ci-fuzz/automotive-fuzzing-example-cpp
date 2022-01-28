@@ -16,3 +16,16 @@ target_include_directories(AUTOMOTIVE-FUZZING-EXAMPLE-CPP PRIVATE
     modules/key_management_module/src
     modules/GPS_module/src
 )
+
+add_executable(tests
+    test/simple_unit_test.cpp   
+)
+
+target_include_directories(tests PRIVATE
+    modules/crypto_module/src
+    modules/time_module/src
+    modules/key_management_module/src
+    modules/GPS_module/src
+)
+
+target_link_libraries(tests AUTOMOTIVE-FUZZING-EXAMPLE-CPP)
