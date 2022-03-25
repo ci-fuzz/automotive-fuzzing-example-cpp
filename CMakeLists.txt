@@ -29,3 +29,5 @@ target_include_directories(tests PRIVATE
 )
 
 target_link_libraries(tests AUTOMOTIVE-FUZZING-EXAMPLE-CPP)
+
+add_subdirectory(cmake_integration)
