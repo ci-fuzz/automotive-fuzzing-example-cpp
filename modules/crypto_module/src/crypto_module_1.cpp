@@ -1,5 +1,7 @@
-#include <string.h>
-#include <iostream>
+#include <stddef.h>
+#include <stdint.h>
+extern "C" void *memset(void *s, int c, size_t n);
+extern "C" void *calloc(size_t nmemb, size_t size);
 #include "crypto_module_1.h"
 #include "crypto_module_2.h"
 
@@ -61,7 +63,7 @@ namespace crypto {
                 }
             }
             current_state = initialized;
-            std::cout << "[ERROR] Error during hmac calculation!";
+            //std::cout << "[ERROR] Error during hmac calculation!";
             return error_during_hmac_calculation;
         }
         return wrong_state;
@@ -85,14 +87,12 @@ namespace crypto {
 
 uint8_t third_party_library_calc_hmac(const uint8_t * const message, size_t len, char * const key, char * const nonce, uint8_t * hmac) {
     if (len > 4) {
-        if (message[0] == 'F') {
-            if (message[1] == 'U') {            
-                if (message[2] == 'Z') {               
-                    if (message[3] == 'Z') {
-                        int x[3];
-                        int y = 4;
-                        int z = x[y];
-                    }   
+        if (message[0] == 'X') {
+            if (message[1] == 'Y') {            
+                if (message[2] == 'Z') {
+                    int x[3];
+                    int y = 4;
+                    int z = x[y];
                 }   
             }   
         }

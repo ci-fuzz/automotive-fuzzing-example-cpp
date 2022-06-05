@@ -1,8 +1,8 @@
 #ifndef CRYPTO_MODULE_1_H
 #define CRYPTO_MODULE_1_H
 
+#include <stddef.h>
 #include <stdint.h>
-#include <stdlib.h>
 
 #include "crypto_module_types.h"
 

@@ -13,8 +13,8 @@ void test1() {
 }
 
 void test2() {
-    const size_t len = 5;
-    const uint8_t message [len] = { 'F', 'U', 'Z', 'Z', '1'};
+    const size_t len = 6;
+    const uint8_t message [len] = { 'X', 'Y', 'Z', 'A', 'B', 'C'};
     char * key = NULL;
     char * nonce = NULL;
     uint8_t * hmac = NULL;
@@ -27,5 +27,5 @@ int main(void) {
     // Call all tests. Using a test framework would simplify this.
     test1();
     test2();
-    std::cout << "Test run completed!\n";
+    std::cout << "Passed!\n";
 }

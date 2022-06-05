@@ -9,7 +9,7 @@ namespace GPS {
 
 enum return_status init_crypto_module();
 
-enum return_status set_destination_position(position pos);
+enum return_status set_destination_position(GPS::position pos);
 
 position get_destination_position();
 

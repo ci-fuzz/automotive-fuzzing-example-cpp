@@ -1,5 +1,3 @@
-#include <string.h>
-
 #include "GPS_module_types.h"
 #include "GPS_module_1.h"
 
