@@ -1,5 +1,5 @@
 ## Configuration for a CI Fuzz project
-## Generated on 2022-03-24 with CI Fuzz 2.30.0
+## Generated on 2022-06-27 with CI Fuzz 2.35.0+nightly
 ##
 ## Lines that start with "##" are explanations for the following
 ## setting, lines that start with "#" are settings that can be enabled
@@ -14,14 +14,14 @@
 ## directories (/lib, /bin/, /usr, ...) from the host system are
 ## automatically mounted into the container, effectively creating a
 ## build environment from the host.
-build_container: "cifuzz/builder-c:1.1"
+#build_container: ubuntu:20.04
 
 ## The name of the container image used for running the fuzz tests. If
 ## unspecified, the image of the build container is used.
-run_container: "cifuzz/builder-c:1.1"
+#run_container: ubuntu:20.04
 
 ## A list of paths which should be mounted from the host into the
-## build and run containers. The format is SOURCE-DIR:DEST-DIR, where
+## build containers. The format is SOURCE-DIR:DEST-DIR, where
 ## SOURCE-DIR will be bind-mounted from the host filesystem to DEST-DIR
 ## in the container.
 ## Environment variables in the paths are expanded from the host's
@@ -33,13 +33,13 @@ run_container: "cifuzz/builder-c:1.1"
 ## be will automatically copied into the build container and executed to
 ## build the project.
 ## The path must be relative to the root of the project directory.
-#build_script: ".code-intelligence/build.sh"
+build_script: ".code-intelligence/build.sh"
 
 
 
 ## Paths to the fuzz targets to execute.
-#fuzz_tests:
-#  - .code-intelligence/fuzz_targets/*
+fuzz_tests:
+  - .code-intelligence/fuzz_targets/API_fuzz_test.cpp
 
 ## Go packages containing fuzz targets. A fuzzer is created
 ## for each function starting with "Fuzz"
@@ -58,10 +58,8 @@ run_container: "cifuzz/builder-c:1.1"
 ## targets. Note that the Undefined Behavior Sanitizer (UBSan) is
 ## always used, regardless of this setting. By default, only
 ## Address Sanitizer (and Undefined Behavior Sanitizer) is used.
-#sanitizers:
-#  - address
-#  - memory
-#  - thread
+sanitizers:
+  - address
 
 ## The fuzzing engines to use for the fuzz tests. By default, only
 ## libfuzzer is used. Only valid for C/C++ targets.
@@ -72,12 +70,12 @@ run_container: "cifuzz/builder-c:1.1"
 
 ## The run time after which the fuzz tests are cancelled and
 ## considered as having passed. The default is 30 minutes.
-#max_runtime: 2h
+max_runtime: "30m0s"
 
 ## The number of parallel executions per fuzz test. The default is 1,
 ## which means for each combination of fuzzing engine and sanitizer,
 ## each fuzz target is executed once.
-#parallel_executions: 2
+parallel_executions: 1
 
 ## By default, fuzz targets are seeded with an initial input corpus,
 ## which consists of files of various data formats. This often improves
