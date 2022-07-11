@@ -1,5 +1,10 @@
 cmake_minimum_required(VERSION 3.10)
 
+if(CIFUZZ_TESTING)
+    find_package(cifuzz)
+    enable_fuzz_testing()
+endif()
+
 project(AUTOMOTIVE-FUZZING-EXAMPLE-CPP)
 
 add_library(AUTOMOTIVE-FUZZING-EXAMPLE-CPP
@@ -31,8 +36,6 @@ target_include_directories(tests PRIVATE
 target_link_libraries(tests AUTOMOTIVE-FUZZING-EXAMPLE-CPP)
 
 if(CIFUZZ_TESTING)
-    find_package(cifuzz)
-    enable_fuzz_testing()
 
     add_fuzz_test(my_fuzz_test_1 my_fuzz_test_1.cpp)
     target_link_libraries(my_fuzz_test_1 AUTOMOTIVE-FUZZING-EXAMPLE-CPP)
