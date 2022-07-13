@@ -1,0 +1,21 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/home/dte/cifuzz/share/cifuzz/include/cifuzz"
+            ],
+            "defines": [
+                "CIFUZZ_TEST_NAME=\"$FUZZ_TEST\"",
+                "CIFUZZ_SEED_CORPUS=\".\""
+            ],
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c17",
+            "cppStandard": "c++14",
+            "intelliSenseMode": "linux-clang-x64",
+            "compilerArgs": []
+        }
+    ],
+    "version": 4
+}

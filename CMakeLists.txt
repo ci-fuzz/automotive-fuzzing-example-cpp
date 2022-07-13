@@ -1,9 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
-
-if(CIFUZZ_TESTING)
-    find_package(cifuzz)
-    enable_fuzz_testing()
-endif()
+cmake_minimum_required(VERSION 3.16)
 
 project(AUTOMOTIVE-FUZZING-EXAMPLE-CPP)
 
@@ -34,15 +29,3 @@ target_include_directories(tests PRIVATE
 )
 
 target_link_libraries(tests AUTOMOTIVE-FUZZING-EXAMPLE-CPP)
-
-if(CIFUZZ_TESTING)
-
-    add_fuzz_test(my_fuzz_test_1 my_fuzz_test_1.cpp)
-    target_link_libraries(my_fuzz_test_1 AUTOMOTIVE-FUZZING-EXAMPLE-CPP)
-    target_include_directories(my_fuzz_test_1 PRIVATE
-        modules/crypto_module/src
-        modules/time_module/src
-        modules/key_management_module/src
-        modules/GPS_module/src
-    )
-endif()
