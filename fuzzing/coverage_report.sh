@@ -6,7 +6,7 @@ FUZZ_TEST=$1
 
 if test -f "$FUZZ_TEST.cpp"; then
 
-  ./fuzzing/create_llvm_target.sh $FUZZ_TEST
+  ./fuzzing/create_llvm_cov_target.sh $FUZZ_TEST
   
   CORPUS_DIR=.cifuzz-corpus/$FUZZ_TEST
   cd .cifuzz-build/llvm_cov

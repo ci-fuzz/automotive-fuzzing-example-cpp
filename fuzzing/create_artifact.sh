@@ -11,7 +11,7 @@ do
     cifuzz bundle $FUZZ_TEST -o unpacking/$FUZZ_TEST.tar.gz
 
     # Build llvm_cov target
-    ./fuzzing/create_llvm_target.sh $FUZZ_TEST
+    ./fuzzing/create_llvm_cov_target.sh $FUZZ_TEST
 
     # Change directory in work dir and unpack artifact
     cd unpacking
