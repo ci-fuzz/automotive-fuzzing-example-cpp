@@ -19,7 +19,7 @@ if test -f "$FUZZ_TEST.cpp"; then
   cd $WORK_DIR
   cmake ../..
   make
-  clang++ $CXXFLAGS -DCIFUZZ_TEST_NAME=\"$FUZZ_TEST\" -DCIFUZZ_SEED_CORPUS=\".\" -I/home/dte/cifuzz/share/cifuzz/include/cifuzz -I../../modules/time_module/src -I../../modules/key_management_module/src -I../../modules/GPS_module/src -I../../modules/crypto_module/src ../../$FUZZ_TEST.cpp ../../fuzzing/StandaloneFuzzTargetMain.cpp libAUTOMOTIVE-FUZZING-EXAMPLE-CPP.a -o $FUZZ_TEST
+  clang++ $CXXFLAGS -DCIFUZZ_TEST_NAME=\"$FUZZ_TEST\" -DCIFUZZ_SEED_CORPUS=\".\" -I$HOME/cifuzz/share/cifuzz/include/cifuzz -I../../modules/time_module/src -I../../modules/key_management_module/src -I../../modules/GPS_module/src -I../../modules/crypto_module/src ../../$FUZZ_TEST.cpp ../../fuzzing/StandaloneFuzzTargetMain.cpp libAUTOMOTIVE-FUZZING-EXAMPLE-CPP.a -o $FUZZ_TEST
 
   # Run tests with the coverage build
   echo "$CORPUS_DIR"

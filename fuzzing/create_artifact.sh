@@ -27,7 +27,7 @@ do
     echo "    - target: $FUZZ_TEST" >> cifuzz.yaml
     echo "      engine: llvm_cov" >> cifuzz.yaml
     echo "      sanitizer: unknown_sanitizer" >> cifuzz.yaml
-    echo "      build_dir: /home/dte/Documents/Intel/automotive-fuzzing-example-cpp/.cifuzz-build/llvm_cov" >> cifuzz.yaml
+    echo "      build_dir: $PWD/.cifuzz-build/llvm_cov" >> cifuzz.yaml
     echo "      path: llvm_cov/$FUZZ_TEST" >> cifuzz.yaml
     if [ -d "cifuzz-corpus/$FUZZ_TEST" ]; then
       echo "      seeds: cifuzz-corpus/$FUZZ_TEST" >> cifuzz.yaml
