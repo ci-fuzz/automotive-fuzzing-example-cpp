@@ -1,0 +1,12 @@
+#build_script: ".code-intelligence/build.sh"
+
+#fuzz_tests:
+#  - .code-intelligence/fuzz_targets/API_fuzz_test.cpp
+#  - .code-intelligence/fuzz_targets/MyFirstFuzzTest.cpp
+
+#sanitizers:
+#  - address
+
+#max_runtime: "30m0s"
+
+#parallel_executions: 1
