@@ -4,9 +4,9 @@ name: CI Fuzz
 
 on:
   push:
-    branches: [ newcli ]
+    branches: [ newcli, newcli_cicd ]
   pull_request:
-    branches: [ newcli ]
+    branches: [ newcli, newcli_cicd ]
 
 env:
   # The fuzzing server gRPC URL.
