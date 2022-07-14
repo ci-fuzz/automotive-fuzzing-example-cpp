@@ -12,10 +12,6 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(googletest)
 
-
-find_package(cifuzz)
-enable_fuzz_testing()
-
 add_library(AUTOMOTIVE-FUZZING-EXAMPLE-CPP
     modules/crypto_module/src/crypto_module_1.cpp
     modules/crypto_module/src/crypto_module_2.cpp
@@ -47,12 +43,3 @@ target_link_libraries(tests PRIVATE GTest::gtest_main PRIVATE AUTOMOTIVE-FUZZING
 include(GoogleTest)
 gtest_discover_tests(tests)
 
-
-add_fuzz_test(my_fuzz_test_1 my_fuzz_test_1.cpp)
-target_link_libraries(my_fuzz_test_1 PRIVATE AUTOMOTIVE-FUZZING-EXAMPLE-CPP)
-target_include_directories(my_fuzz_test_1 PRIVATE
-    modules/crypto_module/src
-    modules/time_module/src
-    modules/key_management_module/src
-    modules/GPS_module/src
-)
