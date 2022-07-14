@@ -18,7 +18,7 @@ env:
 
 jobs:
   fuzz_tests:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     # Configure your build environment here
     # container: example/docker_image
     steps:
