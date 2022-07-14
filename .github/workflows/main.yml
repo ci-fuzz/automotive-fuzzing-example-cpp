@@ -4,9 +4,9 @@ name: CI Fuzz
 
 on:
   push:
-    branches: [ master ]
+    branches: [ newcli ]
   pull_request:
-    branches: [ master ]
+    branches: [ newcli ]
 
 env:
   # The fuzzing server gRPC URL.
@@ -32,6 +32,7 @@ jobs:
         uses: CodeIntelligenceTesting/github-actions/install-fuzzer-builder@v3
       - id: build-fuzzers
         name: Build Fuzzers
+# This line will actually only start fuzzing one fuzz target 
         run: cd $GITHUB_WORKSPACE/$CHECKOUT_DIR/ && export PATH="$PATH:/root/cifuzz/bin" && fuzzing/create_artifact.sh && mv $(ls *.tar.gz | head -1) fuzzing-artifacts.tar.gz
         shell: "bash"
       - id: start-fuzzing
