@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cassert>
+#include <gtest/gtest.h>
 
 #include "GPS_module_1.h"
 #include "crypto_module_1.h"
@@ -7,14 +8,10 @@
 #include "key_management_module_1.h"
 #include "time_module_1.h"
 
-#include <gtest/gtest.h>
-
 void test1() {
     crypto::init();
     assert(crypto::get_state() == crypto::initialized);
 }
-
-
 
 TEST(Test1, Init_Crypto) {
     crypto::init();

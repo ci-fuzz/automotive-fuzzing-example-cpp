@@ -15,7 +15,7 @@ do
 
     # Change directory in work dir and unpack artifact
     cd unpacking
-    tar -xvf $FUZZ_TEST.tar.gz
+    tar -xf $FUZZ_TEST.tar.gz
     rm $FUZZ_TEST.tar.gz
 
     # Adjust cifuzz.yaml
@@ -47,7 +47,7 @@ do
     fi
 
     # Repack everything and put it in root directory like nothing happened
-    tar cfvz $FUZZ_TEST.tar.gz *
+    tar cfz $FUZZ_TEST.tar.gz *
     mv $FUZZ_TEST.tar.gz ..
     cd ..
     rm -r unpacking
