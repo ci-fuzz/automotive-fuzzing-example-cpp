@@ -18,7 +18,7 @@ env:
 
 jobs:
   fuzz_tests:
-    runs-on: cifuzz/cifuzz:1cd1ef7
+    runs-on: ubuntu-latest
     # Configure your build environment here
     # container: example/docker_image
     steps:
@@ -30,10 +30,18 @@ jobs:
       - id: install-build-tools
         name: Install Fuzzer Build Tools
         uses: CodeIntelligenceTesting/github-actions/install-fuzzer-builder@v3
+      - id: install-cifuzz
+        name: Install CI Fuzz
+        run: |
+          sudo apt-get update
+          sudo apt-get install golang-go libcap-dev
+          git clone https://github.com/CodeIntelligenceTesting/cifuzz/
+          mv cifuzz cifuzz_repo
+          cd cifuzz_repo && make install
       - id: build-fuzzers
         name: Build Fuzzers
-# This line will actually only start fuzzing one fuzz target 
-        run: cd $GITHUB_WORKSPACE/$CHECKOUT_DIR/ && export PATH="$PATH:/root/cifuzz/bin" && fuzzing/create_artifact.sh && mv $(ls *.tar.gz | head -1) fuzzing-artifacts.tar.gz
+        # This line will actually only start fuzzing one fuzz target 
+        run: cd $GITHUB_WORKSPACE/$CHECKOUT_DIR/ && export PATH="$PATH:$HOME/cifuzz/bin" && fuzzing/create_artifact.sh && mv $(ls *.tar.gz | head -1) fuzzing-artifacts.tar.gz
         shell: "bash"
       - id: start-fuzzing
         name: Start Fuzzing
