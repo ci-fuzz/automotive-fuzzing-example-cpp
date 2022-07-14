@@ -18,7 +18,8 @@ do
     tar -xvf $FUZZ_TEST.tar.gz
     rm $FUZZ_TEST.tar.gz
 
-    # Add things to cifuzz.yaml
+    # Adjust cifuzz.yaml
+    sed -i 's/docker: ubuntu/docker: ubuntu:latest/g' cifuzz.yaml
     if [ -d "cifuzz-corpus/$FUZZ_TEST" ]; then
       echo "      seeds: cifuzz-corpus/$FUZZ_TEST" >> cifuzz.yaml
     fi
