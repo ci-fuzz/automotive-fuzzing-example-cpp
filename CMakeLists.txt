@@ -42,12 +42,3 @@ target_include_directories(my_fuzz_test_1 PRIVATE
     modules/key_management_module/src
     modules/GPS_module/src
 )
-
-add_fuzz_test(my_fuzz_test_2 my_fuzz_test_2.cpp)
-target_link_libraries(my_fuzz_test_2 PRIVATE AUTOMOTIVE-FUZZING-EXAMPLE-CPP)
-target_include_directories(my_fuzz_test_2 PRIVATE
-    modules/crypto_module/src
-    modules/time_module/src
-    modules/key_management_module/src
-    modules/GPS_module/src
-)
