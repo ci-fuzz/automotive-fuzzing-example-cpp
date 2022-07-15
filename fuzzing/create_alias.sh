@@ -4,3 +4,4 @@
  
 alias cifuzz-coverage="$PWD/fuzzing/coverage_report.sh"
 alias cifuzz-remote="$PWD/fuzzing/start_fuzzing_run_on_server.sh"
+alias cifuzz-mock="$PWD/fuzzing/create_mock_template.sh"
