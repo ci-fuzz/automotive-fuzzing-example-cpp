@@ -5,6 +5,9 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # GoogleTest requires at least C++14
 set(CMAKE_CXX_STANDARD 14)
 
+find_package(cifuzz)
+enable_fuzz_testing()
+
 include(FetchContent)
 FetchContent_Declare(
   googletest
@@ -44,3 +47,12 @@ target_link_libraries(tests PRIVATE GTest::gtest_main PRIVATE AUTOMOTIVE-FUZZING
 include(GoogleTest)
 gtest_discover_tests(tests)
 
+add_fuzz_test(my_fuzz_test_1 my_fuzz_test_1.cpp)
+target_include_directories(my_fuzz_test_1 PRIVATE
+    modules/crypto_module/src
+    modules/time_module/src
+    modules/key_management_module/src
+    modules/GPS_module/src
+)
+
+target_link_libraries(my_fuzz_test_1 PRIVATE GTest::gtest_main PRIVATE AUTOMOTIVE-FUZZING-EXAMPLE-CPP)
