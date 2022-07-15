@@ -8,11 +8,6 @@
 #include "key_management_module_1.h"
 #include "time_module_1.h"
 
-void test1() {
-    crypto::init();
-    assert(crypto::get_state() == crypto::initialized);
-}
-
 TEST(Test1, Init_Crypto) {
     crypto::init();
     EXPECT_EQ(crypto::get_state(), crypto::initialized);
