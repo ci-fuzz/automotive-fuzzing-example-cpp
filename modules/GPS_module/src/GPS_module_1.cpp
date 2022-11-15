@@ -53,3 +53,7 @@ namespace GPS {
     }
 
 }
+
+uint8_t GPS_driver_obtain_current_position(uint8_t * position_as_bytes, uint8_t * hmac_as_bytes) {
+    return 0;
+}
