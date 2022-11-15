@@ -40,3 +40,19 @@ cc_test(
         "@com_google_googletest//:gtest_main"
     ]
 )
+
+load("@rules_fuzzing//fuzzing:cc_defs.bzl", "cc_fuzz_test")
+
+cc_fuzz_test(
+    name = "my_fuzz_test_1",
+    srcs = ["my_fuzz_test_1.cpp"],
+    corpus = glob(
+        ["my_fuzz_test_1_inputs/**"],
+        allow_empty = True,
+    ),
+    deps = [
+        "@cifuzz",
+        ":AUTOMOTIVE-FUZZING-EXAMPLE-CPP",
+        "@com_google_googletest//:gtest_main"
+    ],
+)
