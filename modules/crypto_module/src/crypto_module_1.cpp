@@ -86,9 +86,13 @@ namespace crypto {
 uint8_t third_party_library_calc_hmac(const uint8_t * const message, size_t len, char * const key, char * const nonce, uint8_t * hmac_raw) {
     if (len > 4) {
         if (message[0] == 'F') {
-            if (message[1] == 'U') {            
-                if (message[2] == 'Z') {               
+            printf("message[0] = %c", message[0]);
+            if (message[1] == 'U') { 
+                printf("message[0] = %c", message[1]);           
+                if (message[2] == 'Z') {   
+                    printf("message[0] = %c", message[2]);            
                     if (message[3] == 'Z') {
+                        printf("message[0] = %c", message[3]);
                         int x[3];
                         int y = 4;
                         int z = x[y];
