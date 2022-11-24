@@ -1,0 +1,44 @@
+{
+    "version": 2,
+    "configurePresets": [
+        {
+            "name": "Clang_configuration",
+            "displayName": "Clang 14.0.0 x86_64-pc-linux-gnu",
+            "description": "Using compilers: C = /usr/bin/clang, CXX = /usr/bin/clang++",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+                "CMAKE_C_COMPILER": "cl.exe",
+                "CMAKE_CXX_COMPILER": "cl.exe",
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "gcc_configuration",
+            "displayName": "GCC 11.2.0 x86_64-linux-gnu",
+            "description": "Using compilers: C = /usr/bin/c89-gcc",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+                "CMAKE_C_COMPILER": "cl.exe",
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "Fuzz_build",
+            "description": "For Fuzzing",
+            "displayName": "Fuzzing",
+            "configurePreset": "Clang_configuration"
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "default",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "gcc_configuration"
+        }
+    ]
+}
