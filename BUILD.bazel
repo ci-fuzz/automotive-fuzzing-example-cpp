@@ -26,7 +26,7 @@ cc_library(
         "modules/key_management_module/src",
         "modules/GPS_module/src"
     ],
-    visibility = ["//visibility:public"],
+    visibility = ["//visibility:public"]
 )
 
 cc_test(
@@ -52,7 +52,6 @@ cc_fuzz_test(
     ),
     deps = [
         "@cifuzz",
-        ":AUTOMOTIVE-FUZZING-EXAMPLE-CPP",
-        "@com_google_googletest//:gtest"
-    ],
+        ":AUTOMOTIVE-FUZZING-EXAMPLE-CPP"
+    ]
 )
