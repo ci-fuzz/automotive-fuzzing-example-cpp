@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.19)
 project(AUTOMOTIVE-FUZZING-EXAMPLE-CPP)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -47,7 +47,7 @@ target_link_libraries(tests PRIVATE GTest::gtest_main PRIVATE AUTOMOTIVE-FUZZING
 include(GoogleTest)
 gtest_discover_tests(tests)
 
-add_fuzz_test(my_fuzz_test_1 my_fuzz_test_1.cpp)
+add_fuzz_test(my_fuzz_test_1 fuzzing/fuzz_test/my_fuzz_test_1.cpp)
 target_include_directories(my_fuzz_test_1 PRIVATE
     modules/crypto_module/src
     modules/time_module/src
