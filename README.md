@@ -2,9 +2,9 @@
 
 Link: https://github.com/microsoft/vscode-cmake-tools/blob/main/docs/cmake-presets.md#enable-cmakepresetsjson-in-the-cmake-tools-extension
 
-Example has four presets. 
-Create a project
+Example has four presets.\
+Create a project\
 cmake -S . --preset={clang, gcc, cifuzz_run, cifuzz_coverage}
 
-Build project
+Build project\
 cmake --build --preset={build_clang, build_gcc, build_cifuzz_run, build_cifuzz_coverage}
