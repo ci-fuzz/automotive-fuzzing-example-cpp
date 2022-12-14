@@ -56,6 +56,21 @@
                 "CIFUZZ_TESTING": "BOOL=ON", 
                 "CMAKE_BUILD_RPATH_USE_ORIGIN": "BOOL=ON"
             }
+        },
+        {
+            "name": "cifuzz_bundle",
+            "displayName": "GCC 11.2.0 x86_64-linux-gnu",
+            "description": "Using compilers: C = /usr/bin/c89-gcc",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+                "CIFUZZ_ENGINE": "libfuzzer",
+                "CIFUZZ_TESTING": "BOOL=ON", 
+                "CMAKE_BUILD_RPATH_USE_ORIGIN": "BOOL=ON"
+            }
         }
     ],
     "testPresets": [
@@ -87,10 +102,16 @@
             "configurePreset": "cifuzz_run"
         },
         {
-            "name": "build_cifuzz_converage",
+            "name": "build_cifuzz_coverage",
             "description": "",
             "displayName": "",
             "configurePreset": "cifuzz_coverage"
+        },
+        {
+            "name": "build_cifuzz_bundle",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "cifuzz_bundle"
         }
     ]
 }
