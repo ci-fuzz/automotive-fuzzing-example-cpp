@@ -8,8 +8,8 @@ fi
 if [ "$1" == "run" ]; then
   cmake -S . --preset=cifuzz_run
   cifuzz run --build-command="cmake --build --preset=build_cifuzz_run --target my_fuzz_test_1" out/build/cifuzz_run/my_fuzz_test_1
-  cmake -S . --preset=cifuzz_coverage
 elif [ "$1" == "coverage" ]; then
+  cmake -S . --preset=cifuzz_coverage
   # We have to specify the following:
   # build_command: How to build the coverage target (e.g. select coverage preset)
   # seed-corpus: If the coverage target will be build in a different folder than the run target we need to specify this to point to the correct corpus dir
