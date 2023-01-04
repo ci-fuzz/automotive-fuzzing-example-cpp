@@ -25,6 +25,6 @@ rules_fuzzing_init()
 
 git_repository(
     name = "cifuzz",
-    commit = "1ccb0bb7f27864626f668cca6d6e87776e6f87bd",
+    commit = "b013aa0f90fe8ac60adfc6d9640a9cfa451dda9e",
     remote = "https://github.com/CodeIntelligenceTesting/cifuzz-bazel",
 )
