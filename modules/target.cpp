@@ -15,7 +15,7 @@ const int num_threads = 5;
 void sleep(){
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dis(1, 5);
+    std::uniform_int_distribution<> dis(1, 10);
     int sleep_duration = dis(gen);
 
     std::this_thread::sleep_for(std::chrono::milliseconds(sleep_duration));
@@ -199,13 +199,6 @@ void start_thread3(const uint8_t * const message, size_t len) {
     pthread_t threads[num_threads];
     for (int i = 0; i < num_threads; ++i) {
         pthread_create(&threads[i], NULL, hmac3, &args);
-    }
-
-    // solution 1
-//    std::this_thread::sleep_for(std::chrono::seconds(1));
-    // solution 2
-    for (int i = 0; i < num_threads; ++i) {
-        pthread_join(threads[i], NULL);
     }
 
     std::cout << "##### 3 : Thread has finished!" << std::endl;
