@@ -11,5 +11,6 @@ FUZZ_TEST_SETUP() {
 
 FUZZ_TEST(const uint8_t *data, size_t size) {
 
-  hmac(data, size);
+  start_thread0(data, size);
 }
+
