@@ -4,7 +4,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-void start_thread0(const uint8_t * const message, size_t len);
 void start_thread1(const uint8_t * const message, size_t len);
 void start_thread2(const uint8_t * const message, size_t len);
 void start_thread3(const uint8_t * const message, size_t len);

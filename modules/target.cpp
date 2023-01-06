@@ -1,4 +1,5 @@
 #include <thread>
+#include <mutex>
 #include <iostream>
 #include <chrono>
 #include <random>
@@ -8,6 +9,7 @@
 struct ThreadArgs {
   const uint8_t * const message;
   size_t len;
+  int id;
 };
 
 const int num_threads = 5;
@@ -21,56 +23,17 @@ void sleep(){
     std::this_thread::sleep_for(std::chrono::milliseconds(sleep_duration));
 }
 
-void* hmac0(void* arg) {
+
+// #################### Solution 1 #####################################
+
+void* hmac1(ThreadArgs& args) {
 
     sleep();
 
-    std::cout << "#####  2 : Hello from thread! ID: " << pthread_self() << std::endl;
+    std::cout << "#####  2 : Hello from thread! ID: " << std::this_thread::get_id() << std::endl;
 
-    ThreadArgs* args = static_cast<ThreadArgs*>(arg);
-    const uint8_t * const message = args->message;
-    size_t len = args->len;
-
-    if (len > 4) {
-        if (message[0] == 'F') {
-            if (message[1] == 'U') {            
-                if (message[2] == 'Z') {               
-                    if (message[3] == 'Z') {
-                        int x[3];
-                        int y = 4;
-                        int z = x[y];
-                    }   
-                }   
-            }   
-        }
-    }
-    return NULL;
-}
-
-void start_thread0(const uint8_t * const message, size_t len) {
-  
-    ThreadArgs args = {message, len};
-    std::cout << "##### 1 : Create thread! Solution 1" << std::endl;
-
-    const int num_threads = 5;
-    pthread_t threads[num_threads];
-    for (int i = 0; i < num_threads; ++i) {
-        pthread_create(&threads[i], NULL, hmac0, &args);
-    }
-
-    std::cout << "##### 3 : Thread has finished!" << std::endl;
-
-}
-
-void* hmac1(void* arg) {
-
-    sleep();
-
-    std::cout << "#####  2 : Hello from thread! ID: " << pthread_self() << std::endl;
-
-    ThreadArgs* args = static_cast<ThreadArgs*>(arg);
-    const uint8_t * const message = args->message;
-    size_t len = args->len;
+    const uint8_t * const message = args.message;
+    size_t len = args.len;
 
     if (len > 4) {
         if (message[0] == 'F') {
@@ -93,28 +56,31 @@ void start_thread1(const uint8_t * const message, size_t len) {
     ThreadArgs args = {message, len};
     std::cout << "##### 1 : Create thread! Solution 1" << std::endl;
 
-    const int num_threads = 5;
-    pthread_t threads[num_threads];
+    std::thread threads[num_threads];
+
     for (int i = 0; i < num_threads; ++i) {
-        pthread_create(&threads[i], NULL, hmac1, &args);
+        threads[i] = std::thread(hmac1, std::ref(args));
+        threads[i].detach();
     }
 
-    // solution 1
     std::this_thread::sleep_for(std::chrono::seconds(1));
 
     std::cout << "##### 3 : Thread has finished!" << std::endl;
 
 }
 
-void* hmac2(void* arg) {
+// #################### Solution 2 #####################################
 
+std::mutex counter_mutex;
+
+void* hmac2(ThreadArgs& args) {
+    std::lock_guard<std::mutex> lock(counter_mutex);
     sleep();
 
-    std::cout << "#####  2 : Hello from thread! ID: " << pthread_self() << std::endl;
+    std::cout << "#####  2 : Hello from thread! ID: " << std::this_thread::get_id() << std::endl;
 
-    ThreadArgs* args = static_cast<ThreadArgs*>(arg);
-    const uint8_t * const message = args->message;
-    size_t len = args->len;
+    const uint8_t * const message = args.message;
+    size_t len = args.len;
 
     if (len > 4) {
         if (message[0] == 'F') {
@@ -137,14 +103,14 @@ void start_thread2(const uint8_t * const message, size_t len) {
     ThreadArgs args = {message, len};
     std::cout << "##### 1 : Create thread! Solution 2" << std::endl;
 
-    pthread_t threads[num_threads];
+    std::thread threads[num_threads];
+
     for (int i = 0; i < num_threads; ++i) {
-        pthread_create(&threads[i], NULL, hmac2, &args);
+        threads[i] = std::thread(hmac2, std::ref(args));
     }
 
-    // solution 2
     for (int i = 0; i < num_threads; ++i) {
-        pthread_join(threads[i], NULL);
+        threads[i].join();
     }
 
     std::cout << "##### 3 : Thread has finished!" << std::endl;
@@ -152,22 +118,18 @@ void start_thread2(const uint8_t * const message, size_t len) {
 }
 
 
+// #################### Solution 3 #####################################
 
-pthread_cond_t cond;
-pthread_mutex_t mutex;
-bool flags[num_threads];
+void* hmac3(ThreadArgs& args) {
 
+    std::unique_lock<std::mutex> lock(counter_mutex);
 
-void* hmac3(void* arg) {
-    pthread_mutex_lock(&mutex);
-    
     sleep();
 
-    std::cout << "#####  2 : Hello from thread! ID: " << pthread_self() << std::endl;
+    std::cout << "#####  2 : Hello from thread! ID: " << std::this_thread::get_id() << std::endl;
 
-    ThreadArgs* args = static_cast<ThreadArgs*>(arg);
-    const uint8_t * const message = args->message;
-    size_t len = args->len;
+    const uint8_t * const message = args.message;
+    size_t len = args.len;
 
     if (len > 4) {
         if (message[0] == 'F') {
@@ -182,26 +144,25 @@ void* hmac3(void* arg) {
             }   
         }
     }
-    pthread_cond_signal(&cond);
-    pthread_mutex_unlock(&mutex);
+    lock.unlock();
     return NULL;
 }
 
 void start_thread3(const uint8_t * const message, size_t len) {
   
-    pthread_cond_init(&cond, NULL);
-    pthread_mutex_init(&mutex, NULL);
-
     ThreadArgs args = {message, len};
     std::cout << "##### 1 : Create thread! Solution 3" << std::endl;
 
-    const int num_threads = 5;
-    pthread_t threads[num_threads];
+    std::thread threads[num_threads];
+
     for (int i = 0; i < num_threads; ++i) {
-        pthread_create(&threads[i], NULL, hmac3, &args);
+        threads[i] = std::thread(hmac4, std::ref(args));
+    }
+
+    for (int i = 0; i < num_threads; ++i) {
+        threads[i].join();
     }
 
     std::cout << "##### 3 : Thread has finished!" << std::endl;
 
 }
-
