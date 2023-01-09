@@ -1,6 +1,6 @@
-load("@rules_cc//cc:defs.bzl", "cc_library")
+load("@rules_cc//cc:defs.bzl", "cc_library", "cc_binary")
 
-
+# Target library
 cc_library(
     name = "AUTOMOTIVE-FUZZING-EXAMPLE-CPP",
     srcs = [
@@ -12,7 +12,23 @@ cc_library(
     includes = [
         "modules/"
     ],
+    linkopts = ["-shared"],
+    alwayslink = True,
     visibility = ["//visibility:public"]
+)
+
+# Target library as a shared object
+cc_binary(
+    name = "libmain.so",
+    linkshared = True,
+    deps = [":AUTOMOTIVE-FUZZING-EXAMPLE-CPP"],
+)
+
+# Import shared object into fuzz target
+cc_import(
+  name = "import_libmain",
+  hdrs = ["modules/target.h"],
+  shared_library = "libmain.so",
 )
 
 load("@rules_fuzzing//fuzzing:cc_defs.bzl", "cc_fuzz_test")
@@ -24,8 +40,9 @@ cc_fuzz_test(
         ["my_fuzz_test_1_inputs/**"],
         allow_empty = True,
     ),
+    includes = ["modules/"],
     deps = [
         "@cifuzz",
-        ":AUTOMOTIVE-FUZZING-EXAMPLE-CPP"
+        ":import_libmain"
     ]
 )
