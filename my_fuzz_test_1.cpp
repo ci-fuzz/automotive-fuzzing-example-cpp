@@ -1,5 +1,6 @@
 #include <dlfcn.h>
 #include <iostream>
+#include <thread>
 
 #include <cifuzz/cifuzz.h>
 
@@ -9,11 +10,12 @@ int print = 1;
 
 FUZZ_TEST_SETUP() {
   // Perform any one-time setup required by the FUZZ_TEST function.
-  int (*original_main)(int, char **);
-  original_main = (int (*)(int, char **))dlsym(RTLD_NEXT, "main");
+  int (*origin_main)(int, char **);
+  origin_main = (int (*)(int, char **))dlsym(RTLD_NEXT, "main");
   
   char **c;
-  original_main(1, c);
+  //origin_main(1, NULL);
+  std::thread(origin_main, 1, c).detach();
 
 }
 
