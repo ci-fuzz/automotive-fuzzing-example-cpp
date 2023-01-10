@@ -8,12 +8,19 @@
 
 int print = 1;
 
+// 1. Typedef signature for main function
+typedef int (*MainSignature)(int, char **);
+
 FUZZ_TEST_SETUP() {
   // Perform any one-time setup required by the FUZZ_TEST function.
-  int (*origin_main)(int, char **);
-  origin_main = (int (*)(int, char **))dlsym(RTLD_NEXT, "main");
-  
+
+  // 2. Define signature for the main function with a null pointer
+  MainSignature origin_main = nullptr;
+  // 3. Obtain the address of the main function from shared object
+  origin_main = (MainSignature)dlsym(RTLD_NEXT, "main");
+  // 4. If needed prepare arguments for the main function
   char **c;
+  // Invoke the origin main function
   //origin_main(1, NULL);
   std::thread(origin_main, 1, c).detach();
 
