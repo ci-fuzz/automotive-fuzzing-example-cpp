@@ -14,7 +14,7 @@ typedef int (*MainSignature)(int, char **);
 FUZZ_TEST_SETUP() {
   // Perform any one-time setup required by the FUZZ_TEST function.
 
-  // 2. Define signature for the main function with a null pointer
+  // 2. Declare signature for the main function with a null pointer
   MainSignature origin_main = nullptr;
   // 3. Obtain the address of the main function from shared object
   origin_main = (MainSignature)dlsym(RTLD_NEXT, "main");
@@ -31,6 +31,6 @@ FUZZ_TEST(const uint8_t *data, size_t size) {
       std::cout << "############ Start Fuzzing ##############" << std::endl;
       print = 0;
     }
-    hmac(data, size);
+    UBSanFinding(data, size);
 }
 
