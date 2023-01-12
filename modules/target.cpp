@@ -6,13 +6,17 @@
 
 #include "target.h"
 
+#define FUZZ
+
 struct ThreadArgs {
-  const uint8_t * const message;
+  const uint8_t * message;
   size_t len;
-  int id;
+#ifdef FUZZ
+  volatile int *finished;
+  volatile int id;
+#endif
 };
 
-const int num_threads = 5;
 
 void sleep(){
     std::random_device rd;
@@ -26,7 +30,7 @@ void sleep(){
 
 // #################### Solution 1 #####################################
 
-void* hmac1(ThreadArgs& args) {
+void* UBSanFinding1(ThreadArgs& args) {
 
     sleep();
 
@@ -51,118 +55,79 @@ void* hmac1(ThreadArgs& args) {
     return NULL;
 }
 
-void start_thread1(const uint8_t * const message, size_t len) {
-  
-    ThreadArgs args = {message, len};
-    std::cout << "##### 1 : Create thread! Solution 1" << std::endl;
+void simpleExample(const uint8_t * const message, size_t len) {
+
+    ThreadArgs args[num_threads];
+
+    std::cout << "##### 1 : Create threads! " << std::endl;
 
     std::thread threads[num_threads];
 
     for (int i = 0; i < num_threads; ++i) {
-        threads[i] = std::thread(hmac1, std::ref(args));
+        args[i].message = message;
+        args[i].len = len;
+
+        threads[i] = std::thread(UBSanFinding1, std::ref(args[i]));
         threads[i].detach();
     }
 
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-
     std::cout << "##### 3 : Thread has finished!" << std::endl;
 
 }
 
-// #################### Solution 2 #####################################
 
-std::mutex counter_mutex;
+volatile int threadFinished1[num_threads] = {0};
+volatile int threadFinished2[num_threads] = {0};
 
-void* hmac2(ThreadArgs& args) {
-    std::lock_guard<std::mutex> lock(counter_mutex);
+void* UBSanFinding(ThreadArgs& args) {
+
     sleep();
 
-    std::cout << "#####  2 : Hello from thread! ID: " << std::this_thread::get_id() << std::endl;
-
-    const uint8_t * const message = args.message;
+    std::cout << "#####  THREAD : Hello from thread! ID: " << std::this_thread::get_id() << " <> " << args.id << std::endl;
+    const uint8_t * const &message = args.message;
     size_t len = args.len;
 
     if (len > 4) {
         if (message[0] == 'F') {
-            if (message[1] == 'U') {            
-                if (message[2] == 'Z') {               
+            if (message[1] == 'U') {
+                if (message[2] == 'Z') {
                     if (message[3] == 'Z') {
                         int x[3];
                         int y = 4;
                         int z = x[y];
-                    }   
-                }   
-            }   
+                    }
+                }
+            }
         }
     }
+
+#ifdef FUZZ
+    *(args.finished) = 1;
+    threadFinished2[args.id] = 1;
+#endif
+
     return NULL;
 }
 
-void start_thread2(const uint8_t * const message, size_t len) {
+void advancedExample(const uint8_t * const message, size_t len) {
   
-    ThreadArgs args = {message, len};
-    std::cout << "##### 1 : Create thread! Solution 2" << std::endl;
+    ThreadArgs args[num_threads];
 
+    std::cout << "##### SUT : Create threads! " << std::endl;
     std::thread threads[num_threads];
 
     for (int i = 0; i < num_threads; ++i) {
-        threads[i] = std::thread(hmac2, std::ref(args));
+        args[i].message = message;
+        args[i].len = len;
+#ifdef FUZZ
+        args[i].finished = &threadFinished1[i];
+        args[i].id = i;
+        std::cout << "##### SUT : Start thread with id : " << args[i].id << std::endl;
+#endif
+        threads[i] = std::thread(UBSanFinding, std::ref(args[i]));
+        threads[i].detach();
     }
 
-    for (int i = 0; i < num_threads; ++i) {
-        threads[i].join();
-    }
-
-    std::cout << "##### 3 : Thread has finished!" << std::endl;
-
-}
-
-
-// #################### Solution 3 #####################################
-
-void* hmac3(ThreadArgs& args) {
-
-    std::unique_lock<std::mutex> lock(counter_mutex);
-
-    sleep();
-
-    std::cout << "#####  2 : Hello from thread! ID: " << std::this_thread::get_id() << std::endl;
-
-    const uint8_t * const message = args.message;
-    size_t len = args.len;
-
-    if (len > 4) {
-        if (message[0] == 'F') {
-            if (message[1] == 'U') {            
-                if (message[2] == 'Z') {               
-                    if (message[3] == 'Z') {
-                        int x[3];
-                        int y = 4;
-                        int z = x[y];
-                    }   
-                }   
-            }   
-        }
-    }
-    lock.unlock();
-    return NULL;
-}
-
-void start_thread3(const uint8_t * const message, size_t len) {
-  
-    ThreadArgs args = {message, len};
-    std::cout << "##### 1 : Create thread! Solution 3" << std::endl;
-
-    std::thread threads[num_threads];
-
-    for (int i = 0; i < num_threads; ++i) {
-        threads[i] = std::thread(hmac4, std::ref(args));
-    }
-
-    for (int i = 0; i < num_threads; ++i) {
-        threads[i].join();
-    }
-
-    std::cout << "##### 3 : Thread has finished!" << std::endl;
+    std::cout << "##### SUT : Has finished!" << std::endl;
 
 }

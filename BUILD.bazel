@@ -18,7 +18,20 @@ cc_library(
 load("@rules_fuzzing//fuzzing:cc_defs.bzl", "cc_fuzz_test")
 
 cc_fuzz_test(
-    name = "my_fuzz_test_1",
+    name = "advancedExample",
+    srcs = ["my_fuzz_test_2.cpp"],
+    corpus = glob(
+        ["my_fuzz_test_1_inputs/**"],
+        allow_empty = True,
+    ),
+    deps = [
+        "@cifuzz",
+        ":AUTOMOTIVE-FUZZING-EXAMPLE-CPP"
+    ]
+)
+
+cc_fuzz_test(
+    name = "simpleExample",
     srcs = ["my_fuzz_test_1.cpp"],
     corpus = glob(
         ["my_fuzz_test_1_inputs/**"],

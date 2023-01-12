@@ -1,22 +1,44 @@
-# automotive-fuzzing-example-cpp
+# Description
+Example for fuzzing a SUT with detached threads
 
-Run: cifuzz run :my_fuzz_test_1
+# Build and execute
+```
+cifuzz run :simpleExample
+cifuzz run :advancedExample
+```
+# Problem description
 
-There are four multithreading examples.
-1. the scound has a naive protection by waiting 1 secound and the threads are detached
-2. the third one wait until a thread terminated by using join() and lock_guard
-3. the third one wait until a thread terminated by using join() and unique_lock
+Note, this description is only aimed at detached threads.
 
-to use it comment and uncomment the function:
-FUZZ_TEST(const uint8_t *data, size_t size) {
+The following image shows a possible example for creation and starting several threads and their sequence.
+There are two ways to protect memory access:
+1. Protect access by safe guards or
+2. Each thread gets an exclusive memory area.
 
-  start_thread1(data, size);
-//  start_thread2(data, size);
-//  start_thread3(data, size);
-}
+![Default sequence flow](/documentation/Default_sequence_flow.jpg)
 
-Compare duration for solutions:
+However. let's consider what happens when this function is executed during fuzzing. The following image shows the first run. The fuzz function "LLVMFuzzerTestOneInput()" starts and invokes the function "targetFunction()". This function creates, starts detached several threads and ends, which also ends the function "LLVMFuzzerTestOneInput()". As in this example, it may be that the threads will be further executed.
 
-1. exec/s: 1 (53s) // depends on std::this_thread::sleep_for(std::chrono::seconds(1));
-2. exec/s: 36 (23s) 
-3. exec/s: 36 (24s) 
+![Sequence for the first run](/documentation/Fuzz_run_1.jpg)
+
+Now, let's consider the second run, which is shown in the next image. After the function "LLVMFuzzerTestOneInput()" is finished, it is called immediately with a new fuzz date. This function involes the function "targetFunction()" and creates and starts new threads. This results in an overlap of resources, which can lead to false positive findings.
+
+![Sequence for the second run](/documentation/Fuzz_run_2.jpg)
+
+# Approach
+
+In our two approaches we extend the duration of the function "LLVMFuzzerTestOneInput()".
+
+## Simple approach
+
+In the first example, the duration time is extended by a sleep. It is important to ensure that the value is not too large or too small. But the chosen sleep duration slows down the execution.
+
+With this approach, nothing needs to be adjusted on the SUT. 
+
+![Simple approach](/documentation/simpleApproach.jpg)
+
+## Advanced approach
+
+In this example, the detached threads will signal their finishes. Therefore, the runtime adapts dynamically. However, this requires adjustments to be made to the SUT.
+
+![Simple approach](/documentation/advancedApproach.jpg)

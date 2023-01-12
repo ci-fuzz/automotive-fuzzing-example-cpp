@@ -19,9 +19,24 @@ FUZZ_TEST_SETUP() {
 FUZZ_TEST(const uint8_t *data, size_t size) {
 
   std::cout << "###### FUZZTEST : Start fuzzing" << std::endl;
-  simpleExample(data, size);
+  advancedExample(data, size);
+
 #ifdef FUZZ
-  std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    int sum = 0;
+    while (1) {
+        sum = 0;
+        for (int i = 0; i < num_threads; i++){
+            sum += threadFinished2[i];
+        }
+        if (sum == num_threads){
+            break;
+        }
+    }
+    // reset status
+    for (int i = 0; i < num_threads; i++){
+        threadFinished2[i] = 0;
+    }
+    
 #endif
 
     std::cout << "###### FUZZTEST : Finish fuzzing" << std::endl;
