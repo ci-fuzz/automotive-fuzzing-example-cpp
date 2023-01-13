@@ -1,34 +1,69 @@
 # Description
-Example for invoke origin main function from target application
+Example for reducing the targets in the build file
 
 # Build and execute
 ```
 cifuzz run :my_fuzz_test_1
+cifuzz run :my_fuzz_test_2
+cifuzz run :another_fuzz_test
 ```
 # Problem description
 
-The default build case for a fuzzing target is depicted in the following image. The System under Test (SUT), the fuzz function and other stuff like stubs/mocks will be compiled and linked together into a binary.
+If you have a lot of fuzz targets in your bazel project, the build file can quickly become overwhelming. 
 
-This case doesn't work if the SUT has its own main function, due to multiple definitions of the main function.
+# Approaches
 
-![Default build case](/documentation/Fuzzing_default_build_case.jpg)
+Whit these two approaches, a template for the fuzz target is created, into which the concrete fuzz target is passed.
 
-# Approach
+## List comprehensions
 
-In our approach the SUT will be separated as a shared library and is linked to runtime into fuzz target (see BUILD.bazel). The origin main function must then still be called in the fuzz function (see my_fuzz_test_1.cpp). There are two ways to invoke the origin main function. 
-
-1. Invoke in the same thread
+Add this to BUILD.bazel
 ```
-  origin_main(1, NULL);
-```
-2. Or invoke in a new thread
-```
-  std::thread(origin_main, 1, c).detach();
+[cc_fuzz_test(
+    name = name,
+    srcs = [name+".cpp"],
+    corpus = glob(
+        [name+"_inputs/**"],
+        allow_empty = True,
+    ),
+    includes = ["modules/"],
+    deps = [
+        "@cifuzz",
+        ":AUTOMOTIVE-FUZZING-EXAMPLE-CPP"
+    ]
+) for name in ["my_fuzz_test_1", "my_fuzz_test_2", "another_fuzz_test"]]
 ```
 
-This depends on the purpose of the main function. The following should be considered:
-* initializes the main function somewhat?
-* Does the main function have to run to the end?
-* Does the main function call an infinite loop? 
+See: https://docs.bazel.build/versions/0.18.1/skylark/spec.html#comprehensions
 
-![Build case to invoke origin main](/documentation/Fuzzing_invoke_main_build_case.jpg)
+## Bazel macro
+
+Create a new file 'defs.bzl' and add this into
+```
+load("@rules_fuzzing//fuzzing:cc_defs.bzl", "cc_fuzz_test")
+
+def generate_fuzz_targets(names):
+    for name in names:
+        print("Name:" , name)
+        cc_fuzz_test(
+            name = name,
+            srcs = [name+".cpp"],
+            corpus = native.glob(
+                [name+"_inputs/**"],
+                allow_empty = True,
+            ),
+            includes = ["modules/"],
+            deps = [
+                "@cifuzz",
+                ":AUTOMOTIVE-FUZZING-EXAMPLE-CPP"
+            ]
+        )
+```
+
+Add this to BUILD.bazel
+```
+load("//:defs.bzl", "generate_fuzz_targets")
+generate_fuzz_targets(["my_fuzz_test_1", "my_fuzz_test_2", "another_fuzz_test"])
+```
+
+See: https://bazel.build/extending/macros

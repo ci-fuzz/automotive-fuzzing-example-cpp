@@ -12,37 +12,24 @@ cc_library(
     includes = [
         "modules/"
     ],
-    linkopts = ["-shared"],
-    alwayslink = True,
     visibility = ["//visibility:public"]
-)
-
-# Target library as a shared object
-cc_binary(
-    name = "libmain.so",
-    linkshared = True,
-    deps = [":AUTOMOTIVE-FUZZING-EXAMPLE-CPP"],
-)
-
-# Import shared object into fuzz target
-cc_import(
-  name = "import_libmain",
-  hdrs = ["modules/target.h"],
-  shared_library = "libmain.so",
 )
 
 load("@rules_fuzzing//fuzzing:cc_defs.bzl", "cc_fuzz_test")
 
-cc_fuzz_test(
-    name = "my_fuzz_test_1",
-    srcs = ["my_fuzz_test_1.cpp"],
+[cc_fuzz_test(
+    name = name,
+    srcs = [name+".cpp"],
     corpus = glob(
-        ["my_fuzz_test_1_inputs/**"],
+        [name+"_inputs/**"],
         allow_empty = True,
     ),
     includes = ["modules/"],
     deps = [
         "@cifuzz",
-        ":import_libmain"
+        ":AUTOMOTIVE-FUZZING-EXAMPLE-CPP"
     ]
-)
+) for name in ["my_fuzz_test_1", "my_fuzz_test_2", "another_fuzz_test"]]
+
+#load("//:defs.bzl", "generate_fuzz_targets")
+#generate_fuzz_targets(["my_fuzz_test_1", "my_fuzz_test_2", "another_fuzz_test"])
