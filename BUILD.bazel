@@ -2,33 +2,19 @@ load("@rules_cc//cc:defs.bzl", "cc_library", "cc_binary")
 
 # Target library
 cc_library(
-    name = "AUTOMOTIVE-FUZZING-EXAMPLE-CPP",
+    name = "AUTOMOTIVE_FUZZING_EXAMPLE_CPP",
     srcs = [
-        "modules/target.cpp"
+        "modules/target.cpp",
+        "modules/parser.cpp"
     ],
     hdrs = [
-        "modules/target.h"
+        "modules/target.h",
+        "modules/parser.h"
     ],
     includes = [
         "modules/"
     ],
-    linkopts = ["-shared"],
-    alwayslink = True,
     visibility = ["//visibility:public"]
-)
-
-# Target library as a shared object
-cc_binary(
-    name = "libmain.so",
-    linkshared = True,
-    deps = [":AUTOMOTIVE-FUZZING-EXAMPLE-CPP"],
-)
-
-# Import shared object into fuzz target
-cc_import(
-  name = "import_libmain",
-  hdrs = ["modules/target.h"],
-  shared_library = "libmain.so",
 )
 
 load("@rules_fuzzing//fuzzing:cc_defs.bzl", "cc_fuzz_test")
@@ -43,6 +29,35 @@ cc_fuzz_test(
     includes = ["modules/"],
     deps = [
         "@cifuzz",
-        ":import_libmain"
+        ":AUTOMOTIVE_FUZZING_EXAMPLE_CPP"
+    ]
+)
+
+cc_fuzz_test(
+    name = "my_fuzz_test_2",
+    srcs = ["my_fuzz_test_2.cpp"],
+    corpus = glob(
+        ["my_fuzz_test_2_inputs/**"],
+        allow_empty = True,
+    ),
+    includes = ["modules/"],
+    deps = [
+        "@cifuzz",
+        ":AUTOMOTIVE_FUZZING_EXAMPLE_CPP"
+    ],
+    linkopts = ["-Wl,--wrap=_Z6parserh"]
+)
+
+cc_fuzz_test(
+    name = "my_fuzz_test_3",
+    srcs = ["my_fuzz_test_3.cpp"],
+    corpus = glob(
+        ["my_fuzz_test_3_inputs/**"],
+        allow_empty = True,
+    ),
+    includes = ["modules/"],
+    deps = [
+        "@cifuzz",
+        ":AUTOMOTIVE_FUZZING_EXAMPLE_CPP"
     ]
 )

@@ -1,19 +1,11 @@
 #include <iostream>
 
 #include "target.h"
-
-int activate = 0;
-
-int main(int argc, char *argv[]){
-
-    activate = 1;
-    std::cout << "############ Hello From Origin Main! ##############" << std::endl;
-    return 0;
-}
+#include "parser.h"
 
 uint8_t UBSanFinding(const uint8_t * const message, size_t len) {
-    if (activate){
-        if (len > 4) {
+    if (len > 4) {
+        if (parser(message[0]) == 0) {
             if (message[0] == 'F') {
                 if (message[1] == 'U') {
                     if (message[2] == 'Z') {
