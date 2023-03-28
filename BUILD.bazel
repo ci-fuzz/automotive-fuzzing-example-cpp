@@ -4,26 +4,27 @@ load("@rules_cc//cc:defs.bzl", "cc_library", "cc_binary")
 cc_library(
     name = "AUTOMOTIVE_FUZZING_EXAMPLE_CPP",
     srcs = [
-        "modules/target.cpp",
+        "modules/check.cpp",
         "modules/parser.cpp"
     ],
     hdrs = [
-        "modules/target.h",
+        "modules/check.h",
         "modules/parser.h"
     ],
     includes = [
         "modules/"
     ],
-    visibility = ["//visibility:public"]
+    visibility = ["//visibility:public"],
+    copts = ["-O0 -g"]
 )
 
 load("@rules_fuzzing//fuzzing:cc_defs.bzl", "cc_fuzz_test")
 
 cc_fuzz_test(
-    name = "my_fuzz_test_1",
-    srcs = ["my_fuzz_test_1.cpp"],
+    name = "my_fuzz_test",
+    srcs = ["my_fuzz_test.cpp"],
     corpus = glob(
-        ["my_fuzz_test_1_inputs/**"],
+        ["my_fuzz_test_inputs/**"],
         allow_empty = True,
     ),
     includes = ["modules/"],
@@ -34,10 +35,24 @@ cc_fuzz_test(
 )
 
 cc_fuzz_test(
-    name = "my_fuzz_test_2",
-    srcs = ["my_fuzz_test_2.cpp"],
+    name = "approach1",
+    srcs = ["approach1.cpp"],
     corpus = glob(
-        ["my_fuzz_test_2_inputs/**"],
+        [".approach1_cifuzz_corpus/**"],
+        allow_empty = True,
+    ),
+    includes = ["modules/"],
+    deps = [
+        "@cifuzz",
+        ":AUTOMOTIVE_FUZZING_EXAMPLE_CPP"
+    ]
+)
+
+cc_fuzz_test(
+    name = "approach2",
+    srcs = ["approach2.cpp"],
+    corpus = glob(
+        [".approach2_cifuzz_corpus/**"],
         allow_empty = True,
     ),
     includes = ["modules/"],
@@ -45,14 +60,43 @@ cc_fuzz_test(
         "@cifuzz",
         ":AUTOMOTIVE_FUZZING_EXAMPLE_CPP"
     ],
-    linkopts = ["-Wl,--wrap=_Z6parserh"]
+    linkopts = ["-Wl,--wrap=raise"]
 )
 
 cc_fuzz_test(
-    name = "my_fuzz_test_3",
-    srcs = ["my_fuzz_test_3.cpp"],
+    name = "approach3",
+    srcs = ["approach3.cpp"],
     corpus = glob(
-        ["my_fuzz_test_3_inputs/**"],
+        [".approach3_cifuzz_corpus/**"],
+        allow_empty = True,
+    ),
+    includes = ["modules/"],
+    deps = [
+        "@cifuzz",
+        ":AUTOMOTIVE_FUZZING_EXAMPLE_CPP"
+    ],
+    linkopts = ["-Wl,--wrap=raise"]
+)
+
+cc_fuzz_test(
+    name = "approach4DNW",
+    srcs = ["approach4DNW.cpp"],
+    corpus = glob(
+        [".approach4DNW_cifuzz_corpus/**"],
+        allow_empty = True,
+    ),
+    includes = ["modules/"],
+    deps = [
+        "@cifuzz",
+        ":AUTOMOTIVE_FUZZING_EXAMPLE_CPP"
+    ]
+)
+
+cc_fuzz_test(
+    name = "approach5DNW",
+    srcs = ["approach5DNW.cpp"],
+    corpus = glob(
+        [".approach5DNW_cifuzz_corpus/**"],
         allow_empty = True,
     ),
     includes = ["modules/"],

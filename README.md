@@ -1,11 +1,14 @@
 # Description
-Example for fuzzing a SUT with throws a signal.
+Example for fuzzing a SUT which throws a signal.
 
 # Build and execute
 ```
-cifuzz run :my_fuzz_test_1
-cifuzz run :my_fuzz_test_2
-cifuzz run :my_fuzz_test_3
+cifuzz run :my_fuzz_test
+cifuzz run :approach1
+cifuzz run :approach2
+cifuzz run :approach3
+cifuzz run :approachDNW4
+cifuzz run :approachDNW5
 ```
 # Problem description
 
@@ -13,77 +16,60 @@ If a SUT uses signals for termination of the execution it makes it more difficul
 
 To demonstrate this run:
 ```
-cifuzz run :my_fuzz_test_1
+cifuzz run :my_fuzz_test
 ```
 
+It is also possible to ignor the signal, but this will cause the application to continue. 
+For demonstrate run this:
+```
+ASAN_OPTIONS=halt_on_error=0 cifuzz run :my_fuzz_test -v --engine-arg -handle_abrt=0
+```
+For more information about Sanitizer flags consider https://github.com/google/sanitizers/wiki/SanitizerCommonFlags
 
 # Approaches
 
-These two approaches show how to handle this.
+These three approaches show how to handle this.
 
-## Mock the triggering function
-With this approach the function, which causes the signal will be mocked. So that signal does not be triggered.
+## Approach 1 fork the SUT
+With this approach the SUT is executed in a separate process. So that the further execution is stopped. But each signal is considered as a finding.
+The SUT does not need to be change for this.
 
 ```
-cifuzz run :my_fuzz_test_2
+cifuzz run :approach1
 ```
 
-Function will be mocked at linking time. A certain mock function must be present. To do this, 
-
-1. find the function to mock in the binaries.
-For example with:
-```
-nm binary | grep parser
-
-000000000010d200 T __wrap__Z6parserh
-000000000010dd50 T _Z6parserh
-```
-The output may look like this: "_Z6parserh". The wrap function name must be created with the prefix "__wrap" concaninate with the symbol name "_Z6parserh".
-
----
 **NOTE:**
-The symbol name depends on compiler and architecture
----
+However, the main disadvantage of this approach is that the fuss tests be carried out very slowly.
 
-2. Add this link option into the fuzztarget
-```
-linkopts = ["-Wl,--wrap=_Z6parserh"]
-```
-
-3. Write the mock function into the fuzztarget
+## Approach 2 load execution context 
+In the next approach the execution context are saved and reloaded if the programme is to prevent further execution. For this, the std::rais() function is mocked at the linking time and instead of triggering a signal, a previously defined context is loaded.
+The SUT does not need to be change for this.
 
 ```
-extern "C" uint8_t __wrap__Z6parserh(){
-    return 0;
-}
+cifuzz run :approach2
 ```
 
-4. Build and run!
-
----
-**NOTE:**
-
-The disadvantage of this approach is that all functions that trigger a signal have to be mocked and that the original functions are not covered by fuzzing.
-
----
-
-
-## Own signal handler
-The next approach uses the possibility that some signals can be intercepted.
+## Approach 3 thow exception 
+This approach shows how to throw an exception to prevent further execution. An additional obstacle is that no exceptions can be thrown in the function. For this, the std::rais() function is mocked at the linking time and instead of triggering a signal, a exception is throwing.
+The SUT is slightly modified for this purpose. A corresponding value is passed to the noexpect().
 
 ```
-cifuzz run :my_fuzz_test_3
+cifuzz run :approach3
 ```
 
-These signals are affected:
+## Approach 4 Does Not Work load execution context 
+In the next approach the execution context are saved and reloaded if the programme is to prevent further execution. For this, an own signal handler is created intercept a abort signal and load the context.
+But this approach does not work!
 
-* SIGABRT
-* SIGFPE
-* SIGILL
-* SIGINT
-* SIGSEGV
-* SIGTERM
+```
+cifuzz run :approachDNW4
+```
 
-To intercept these, write a signal handler and pass it to signal.
+## Approach 5 Does Not Work thow exception 
+This approach shows how to throw an exception to prevent further execution. For this, an own signal handler is created intercept a abort signal and load the context.
+But this approach does not work!
+The SUT is slightly modified for this purpose. A corresponding value is passed to the noexpect().
 
-These signals can be intercept in the whole binary. But the disadvantage is to chose careful the signals to be intercepted because libFuzzer react also on certain signals like SIGSEGV
+```
+cifuzz run :approachDNW5
+```

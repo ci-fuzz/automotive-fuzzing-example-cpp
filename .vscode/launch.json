@@ -1,13 +1,16 @@
 {
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
         {
             "name": "Debug my_fuzz_test_1",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/.cifuzz-build/libfuzzer/address+undefined/my_fuzz_test_1",
+            "program": "${workspaceFolder}/bazel-bin/approach2_bin",
             "args": [
-                ".cifuzz-corpus/my_fuzz_test_1"
+                ".cifuzz-findings/elated_wasp/crashing-input"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
@@ -15,6 +18,10 @@
                 {
                     "name": "ASAN_SYMBOLIZER_PATH",
                     "value": "/opt/ci-fuzz/bin/llvm-symbolizer"
+                },
+                {
+                    "name": "NO_CIFUZZ",
+                    "value": "1"
                 }
             ],
             "externalConsole": false,

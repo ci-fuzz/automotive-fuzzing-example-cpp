@@ -1,34 +1,23 @@
 #include <csignal>
 #include <iostream>
 
+#include "check.h"
 #include "parser.h"
 
-uint8_t parser(uint8_t sigCase){
-    std::cout << "###### parser function" << std::endl;
-    switch (sigCase%6)
-    {
-    case 0:
-        std::raise(SIGABRT);
-        break;
-    case 1:
-        std::raise(SIGFPE);
-        break;
-    case 2:
-        std::raise(SIGILL);
-        break;
-    case 3:
-        std::raise(SIGINT);
-        break;
-    case 4:
-        std::raise(SIGSEGV);
-        break;
-    case 5:
-        std::raise(SIGTERM);
-        break;
-    default:
-        break;
-    }
+
+#ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
+    #define NOEXCEPT false
+#else
+    #define NOEXCEPT true
+#endif
+
+uint8_t parser(const uint8_t * const message, size_t len) noexcept(NOEXCEPT){
+//    std::cout << "###### parser function" << std::endl;
     
+    if (len > 4) {
+        check(message);
+//        std::cout << "###### will be printed when it meets the verification!" << std::endl;
+    }    
 
     return 0;
 }
