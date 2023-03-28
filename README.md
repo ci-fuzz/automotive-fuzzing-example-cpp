@@ -31,7 +31,7 @@ For more information about Sanitizer flags consider https://github.com/google/sa
 These three approaches show how to handle this.
 
 ## Approach 1 fork the SUT
-With this approach the SUT is executed in a separate process. So that the further execution is stopped. But each signal is considered as a finding.
+With this approach the SUT is executed in a separate process. So that the further execution is stopped. But each signal is considered as a finding. To prevent this, a own signal handler can be used, as in this example.
 The SUT does not need to be change for this.
 
 ```
