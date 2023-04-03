@@ -9,8 +9,7 @@ std::jmp_buf my_jump_buffer;
 
 void signalHandler(int signum){
     std::cout << "###### Interrupt signal (" << signum << ") received." << std::endl;
-    std::fflush(stdout);
-    //std::longjmp(my_jump_buffer, 1);
+    std::longjmp(my_jump_buffer, 1);
     std::cout << "########### !!!!!! NEVER be printed!!!!!" << std::endl;
     return;
 }
