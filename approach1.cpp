@@ -9,7 +9,7 @@ int run;
 
 void signalHandler(int signum){
     std::cout << "###### Interrupt signal (" << signum << ") received." << std::endl;
-    return;
+    exit(signum);
 }
 
 FUZZ_TEST_SETUP() {

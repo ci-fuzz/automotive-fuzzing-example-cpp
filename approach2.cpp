@@ -7,11 +7,18 @@
 
 std::jmp_buf my_jump_buffer;
 
-extern "C" int __wrap_raise (int __sig)
+extern "C" int __wrap_raise(int __sig)
 {
-    std::cout << "######## wrapped raise function" << std::endl;
-    std::longjmp(my_jump_buffer, 1);
-    std::cout << "########### !!!!!! NEVER be printed!!!!!" << std::endl;
+    switch (__sig)
+    {
+    case SIGABRT:
+        std::cout << "######## wrapped raise function" << std::endl;
+        std::longjmp(my_jump_buffer, 1);
+        std::cout << "########### !!!!!! NEVER be printed!!!!!" << std::endl;
+        break;
+    default:
+        std::raise(__sig);
+    }
 
     return 0;
 }
@@ -20,13 +27,14 @@ FUZZ_TEST(const uint8_t *data, size_t size)
 {
 
     int val = setjmp(my_jump_buffer);
-    if (val == 0){
-    //    std::cout << "###### Execute SUT" << std::endl;
+    if (val == 0)
+    {
+        //    std::cout << "###### Execute SUT" << std::endl;
         parser(data, size);
-    //    std::cout << "###### Execute finished" << std::endl;
+        //    std::cout << "###### Execute finished" << std::endl;
     }
-    else{
+    else
+    {
         std::cout << "######### It has been jumped" << std::endl;
     }
-
 }
