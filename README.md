@@ -1,44 +1,20 @@
 # Description
-Example for fuzzing a SUT with detached threads
+Example for unisg libFuzzer as a library
 
 # Build and execute
 ```
-cifuzz run :simpleExample
-cifuzz run :advancedExample
+cifuzz run binary
+cifuzz build binary
 ```
-# Problem description
-
-Note, this description is only aimed at detached threads.
-
-The following image shows a possible example for creation and starting several threads and their sequence.
-There are two ways to protect memory access:
-1. Protect access by safe guards or
-2. Each thread gets an exclusive memory area.
-
-![Default sequence flow](/documentation/Default_sequence_flow.jpg)
-
-However. let's consider what happens when this function is executed during fuzzing. The following image shows the first run. The fuzz function "LLVMFuzzerTestOneInput()" starts and invokes the function "targetFunction()". This function creates, starts detached several threads and ends, which also ends the function "LLVMFuzzerTestOneInput()". As in this example, it may be that the threads will be further executed.
-
-![Sequence for the first run](/documentation/Fuzz_run_1.jpg)
-
-Now, let's consider the second run, which is shown in the next image. After the function "LLVMFuzzerTestOneInput()" is finished, it is called immediately with a new fuzz date. This function involes the function "targetFunction()" and creates and starts new threads. This results in an overlap of resources, which can lead to false positive findings.
-
-![Sequence for the second run](/documentation/Fuzz_run_2.jpg)
 
 # Approach
 
-In our two approaches we extend the duration of the function "LLVMFuzzerTestOneInput()".
+This example shows how to use libFuzzer as a library, see https://llvm.org/docs/LibFuzzer.html#using-libfuzzer-as-a-library.
 
-## Simple approach
-
-In the first example, the duration time is extended by a sleep. It is important to ensure that the value is not too large or too small. But the chosen sleep duration slows down the execution.
-
-With this approach, nothing needs to be adjusted on the SUT. 
-
-![Simple approach](/documentation/simpleApproach.jpg)
-
-## Advanced approach
-
-In this example, the detached threads will signal their finishes. Therefore, the runtime adapts dynamically. However, this requires adjustments to be made to the SUT.
-
-![Simple approach](/documentation/advancedApproach.jpg)
+To use it, a few things should be done.
+1. Change the compiler flag in the build settings for the executable, see [BUILD.bazel](BUILD.bazel#L33)
+2. Add the appropriated linker flags, see [BUILD.bazel](BUILD.bazel#L41-L42)
+3. Write a fuzz function as usual, the name of the function can be arbitrary, see [my_fuzz_test_1](my_fuzz_test_1.cpp#L5-L9)
+4. Insert the function ```LLVMFuzzerRunDriver``` into the main function, see [target](target_1.cpp#L54). Alternatively, this can be executed in a separate thread, see [target](target_1.cpp#L55-L62)
+5. To run and bundle this with cifuzz, the cifuzz.yaml file should be adjusted, see [cifuzz](cifuzz.yaml#L7-L12)
+6. We use the build system other option for this approach. It is built using the build.sh script. This script will be executed twice, once to build the fuzzing binary and once to build the coverage binary.

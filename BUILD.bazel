@@ -28,6 +28,8 @@ cc_binary(
         "modules/"
     ],
     copts = [
+        "-g",
+        "-Og",
         "-fsanitize=fuzzer-no-link,address,undefined",
         "-fprofile-instr-generate",
         "-fsanitize-recover=address",
@@ -55,6 +57,8 @@ cc_binary(
         "modules/"
     ],
     copts = [
+        "-g",
+        "-O0",
         "-fprofile-instr-generate",
         "-fcoverage-mapping"
     ],
@@ -65,27 +69,4 @@ cc_binary(
     ],
     visibility = ["//visibility:public"]
 
-)
-
-cc_fuzz_test(
-    name = "explore",
-    srcs = ["my_fuzz_test_2.cpp"],
-    corpus = glob(
-        ["explore_me_fuzz_test_inputs/**"],
-        allow_empty = True,
-    ) + select({
-        "@cifuzz//:collect_coverage": glob([".explore_me_fuzz_test_cifuzz_corpus/**"], allow_empty = True),
-        "//conditions:default": [],
-    }),
-    copts = [
-        "-fsanitize=fuzzer-no-link"
-    ],
-    linkopts = [
-        "-L /usr/lib/clang/14/lib/linux/",
-        "-l clang_rt.fuzzer_no_main-x86_64",
-    ],
-    deps = [
-        ":binary",
-        "@cifuzz",
-    ],
 )
