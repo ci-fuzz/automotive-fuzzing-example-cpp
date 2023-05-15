@@ -1,13 +1,14 @@
 load("@rules_cc//cc:defs.bzl", "cc_library")
+load("@rules_cc//cc:defs.bzl", "cc_binary")
+load("@rules_fuzzing//fuzzing:cc_defs.bzl", "cc_fuzz_test")
 
-
-cc_library(
-    name = "AUTOMOTIVE-FUZZING-EXAMPLE-CPP",
+cc_binary(
+    name = "binary",
     srcs = [
-        "modules/target.cpp"
-    ],
-    hdrs = [
-        "modules/target.h"
+        "modules/target.cpp",
+        "modules/target.h",
+        "my_fuzz_test_1.h",
+        "my_fuzz_test_1.cpp"
     ],
     includes = [
         "modules/"
@@ -15,17 +16,76 @@ cc_library(
     visibility = ["//visibility:public"]
 )
 
-load("@rules_fuzzing//fuzzing:cc_defs.bzl", "cc_fuzz_test")
+cc_binary(
+    name = "binary_fuzzing",
+    srcs = [
+        "modules/target.cpp",
+        "modules/target.h",
+        "my_fuzz_test_1.h",
+        "my_fuzz_test_1.cpp"
+    ],
+    includes = [
+        "modules/"
+    ],
+    copts = [
+        "-fsanitize=fuzzer-no-link,address,undefined",
+        "-fprofile-instr-generate",
+        "-fsanitize-recover=address",
+        "-fsanitize-address-use-after-scope",
+        "-fno-sanitize=function,vptr",
+        "-fno-omit-frame-pointer"
+    ],
+    linkopts = [
+        "-L /usr/lib/clang/14/lib/linux/",
+        "-l clang_rt.fuzzer_no_main-x86_64",
+        "-fsanitize=address,undefined"
+    ],
+    visibility = ["//visibility:public"]
+)
+
+cc_binary(
+    name = "binary_coverage",
+    srcs = [
+        "modules/target.cpp",
+        "modules/target.h",
+        "my_fuzz_test_1.h",
+        "my_fuzz_test_1.cpp"
+    ],
+    includes = [
+        "modules/"
+    ],
+    copts = [
+        "-fprofile-instr-generate",
+        "-fcoverage-mapping"
+    ],
+    linkopts = [
+        "-L /usr/lib/clang/14/lib/linux/",
+        "-l clang_rt.fuzzer_no_main-x86_64",
+        "-fprofile-instr-generate"
+    ],
+    visibility = ["//visibility:public"]
+
+)
 
 cc_fuzz_test(
-    name = "my_fuzz_test_1",
-    srcs = ["my_fuzz_test_1.cpp"],
+    name = "explore",
+    srcs = ["my_fuzz_test_2.cpp"],
     corpus = glob(
-        ["my_fuzz_test_1_inputs/**"],
+        ["explore_me_fuzz_test_inputs/**"],
         allow_empty = True,
-    ),
+    ) + select({
+        "@cifuzz//:collect_coverage": glob([".explore_me_fuzz_test_cifuzz_corpus/**"], allow_empty = True),
+        "//conditions:default": [],
+    }),
+    copts = [
+        "-fsanitize=fuzzer-no-link"
+    ],
+    linkopts = [
+        "-L /usr/lib/clang/14/lib/linux/",
+        "-l clang_rt.fuzzer_no_main-x86_64",
+    ],
     deps = [
+        ":binary",
         "@cifuzz",
-        ":AUTOMOTIVE-FUZZING-EXAMPLE-CPP"
-    ]
+    ],
 )

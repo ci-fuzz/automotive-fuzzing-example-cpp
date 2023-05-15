@@ -4,11 +4,12 @@
 ## The build system used to build this project. If not set, cifuzz tries
 ## to detect the build system automatically.
 ## Valid values: "bazel", "cmake", "maven", "gradle", "other".
-#build-system: cmake
+build-system: other
 
 ## If the build system type is "other", this command is used by
 ## `cifuzz run` to build the fuzz test.
-#build-command: "make my_fuzz_test"
+clean-command: ./clean.sh
+build-command: ./build.sh $FUZZ_TEST
 
 ## Directories containing sample inputs for the code under test.
 ## See https://llvm.org/docs/LibFuzzer.html#corpus and
